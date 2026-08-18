@@ -1735,6 +1735,7 @@
     "qa:e2e": "node --import tsx scripts/qa-e2e.ts",
     "check:e2e:360": "node --import tsx scripts/check-e2e-360-coverage.mts",
     "check:e2e:360:performance": "node --import tsx scripts/check-e2e-360-performance.mts",
+    "check:e2e:360:evidence": "node --import tsx scripts/check-e2e-360-evidence.mts",
     "qa:lab:build": "vite build --config extensions/qa-lab/web/vite.config.ts",
     "qa:lab:ui": "pnpm openclaw qa ui",
     "qa:lab:up": "node --import tsx scripts/qa-lab-up.ts",

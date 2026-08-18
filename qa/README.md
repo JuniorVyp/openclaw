@@ -17,6 +17,7 @@ Key workflow:
 - `qa coverage` prints the scenario coverage inventory from scenario YAML.
 - `pnpm check:e2e:360` verifies that every required 360-degree proof resolves to a primary-owned scenario and coverage ID.
 - `pnpm check:e2e:360:performance -- --report <path>` aggregates observed samples and enforces the contract budgets for p50/p95/p99 and side-effect safety.
+- `pnpm check:e2e:360:evidence -- --evidence <qa-evidence.json> [--require-all]` validates real suite evidence against the contract, including primary coverage IDs, pass status, scenario timing and missing contract scenarios.
 
 Operator workflows:
 

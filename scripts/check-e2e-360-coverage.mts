@@ -65,6 +65,7 @@ export type Coverage360Report = {
   missingProofKinds: Coverage360ProofKind[];
   resolvedScenarioIds: string[];
   resolvedCoverageIds: string[];
+  scenarioCoverageIds: Record<string, string[]>;
   performanceMetrics: string[];
   performanceBudgets: Record<string, number>;
   issues: Coverage360Issue[];
@@ -313,6 +314,7 @@ export function validateCoverage360Contract(
   const coveredProofKinds = new Set<Coverage360ProofKind>();
   const resolvedScenarioIds = new Set<string>();
   const resolvedCoverageIds = new Set<string>();
+  const scenarioCoverageIds = new Map<string, Set<string>>();
   const resolvedFaultInjectionIds = new Set<string>();
 
   validateUniqueValues(contract.requiredStages, "duplicate-stage", "requiredStages", issues);
@@ -375,8 +377,10 @@ export function validateCoverage360Contract(
           proof.scenarioId,
         );
       }
+      const scenarioCoverageSet = scenarioCoverageIds.get(proof.scenarioId) ?? new Set<string>();
       for (const coverageId of proof.coverageIds) {
         resolvedCoverageIds.add(coverageId);
+        scenarioCoverageSet.add(coverageId);
         if (!primaryCoverageIds.has(coverageId)) {
           pushIssue(
             issues,
@@ -387,6 +391,7 @@ export function validateCoverage360Contract(
           );
         }
       }
+      scenarioCoverageIds.set(proof.scenarioId, scenarioCoverageSet);
     }
   }
 
@@ -486,6 +491,12 @@ export function validateCoverage360Contract(
     missingProofKinds: contract.proofKinds.filter((kind) => !coveredProofKinds.has(kind)),
     resolvedScenarioIds: [...resolvedScenarioIds].toSorted(),
     resolvedCoverageIds: [...resolvedCoverageIds].toSorted(),
+    scenarioCoverageIds: Object.fromEntries(
+      [...scenarioCoverageIds.entries()].map(([scenarioId, coverageIds]) => [
+        scenarioId,
+        [...coverageIds].toSorted(),
+      ]),
+    ),
     performanceMetrics: [...contract.performance.requiredMetrics],
     performanceBudgets: { ...contract.performance.budgets },
     issues,
@@ -593,6 +604,7 @@ export function runCoverage360Check(options: Coverage360CheckOptions = {}): Cove
       missingProofKinds: [],
       resolvedScenarioIds: [],
       resolvedCoverageIds: [],
+      scenarioCoverageIds: {},
       performanceMetrics: [],
       performanceBudgets: {},
       issues,

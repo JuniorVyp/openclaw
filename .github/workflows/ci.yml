@@ -1952,7 +1952,8 @@ jobs:
               ;;
             e2e-360-coverage)
               pnpm check:e2e:360
-              pnpm test test/scripts/check-e2e-360-coverage.test.ts test/scripts/check-e2e-360-performance.test.ts
+              pnpm test test/scripts/check-e2e-360-coverage.test.ts test/scripts/check-e2e-360-performance.test.ts test/scripts/check-e2e-360-evidence.test.ts
+              pnpm test extensions/qa-lab/src/suite-runtime-flow.test.ts
               ;;
             *)
               echo "Unsupported checks-fast task: $TASK" >&2

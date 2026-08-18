@@ -40,6 +40,24 @@ requirements:
         scenarioId: channel-workspace-relative-media
         coverageIds:
           - channels.outbound-direct-text-media-sends
+  - id: input-payload-boundary
+    stage: input
+    surface: channels
+    title: Preserve the exact user payload across channel reset boundaries
+    proofs:
+      - kind: boundary
+        scenarioId: session-reset-payload-preservation
+        coverageIds:
+          - channels.channel-native-commands
+  - id: mention-gating
+    stage: validation
+    surface: channels
+    title: Suppress unmentioned group traffic and release one mentioned reply
+    proofs:
+      - kind: boundary
+        scenarioId: channel-mention-gating
+        coverageIds:
+          - channels.mention-gating
   - id: access-and-approval
     stage: validation
     surface: security
@@ -51,6 +69,16 @@ requirements:
           - agent-runtime.tool-approvals
           - agent-runtime.approval-flow-approval-denial
           - agent-runtime.tool-safety-controls
+  - id: provider-failure-visibility
+    stage: processing
+    surface: providers
+    title: Surface provider failures safely after tool execution without replaying the tool
+    proofs:
+      - kind: boundary
+        scenarioId: provider-http-503-visible-failure
+        coverageIds:
+          - agent-runtime.structured-provider-diagnostics
+          - channels.group-final-reply
   - id: streamed-agent-processing
     stage: processing
     surface: agent-runtime
@@ -84,6 +112,15 @@ requirements:
           - session-memory.compaction
           - session-memory.compaction-retry-policy
           - session-memory.pruning
+  - id: approval-denial-stop
+    stage: decision
+    surface: security
+    title: Stop cleanly after denied approval without executing the protected tool
+    proofs:
+      - kind: boundary
+        scenarioId: personal-approval-denial-stop
+        coverageIds:
+          - security.approval-policy-approval-denial
   - id: approval-decision-followthrough
     stage: decision
     surface: security
@@ -106,6 +143,31 @@ requirements:
         scenarioId: streaming-final-integrity
         coverageIds:
           - agent-runtime.streaming-replies
+  - id: node-control-plane
+    stage: output
+    surface: nodes
+    title: Pair a remote node and exercise authenticated capabilities through Gateway control plane
+    proofs:
+      - kind: happy
+        scenarioId: gateway-node-control-plane
+        coverageIds:
+          - gateway.node-presence
+          - gateway.node-capabilities
+          - gateway.node-inventory
+          - gateway.node-actions
+          - gateway.node-events
+          - gateway.remote-device-capabilities
+          - gateway.version-negotiation
+  - id: tui-rendering
+    stage: output
+    surface: tui
+    title: Render streaming messages and tool cards without stale or duplicated terminal frames
+    proofs:
+      - kind: happy
+        scenarioId: tui-streaming-tool-cards-pty
+        coverageIds:
+          - tui.streaming-message-rendering
+          - tui.tool-cards
   - id: media-output
     stage: output
     surface: channels
@@ -115,6 +177,35 @@ requirements:
         scenarioId: channel-workspace-relative-media
         coverageIds:
           - channels.outbound-direct-text-media-sends
+  - id: reconnect-idempotency
+    stage: recovery
+    surface: channels
+    title: Resume after reconnect without replaying completed delivery
+    proofs:
+      - kind: recovery
+        scenarioId: qa-channel-reconnect-dedupe
+        coverageIds:
+          - channels.reconnect-final-reply
+  - id: scheduled-run-idempotency
+    stage: recovery
+    surface: automation
+    title: Execute one scheduled run without duplicate delivery
+    proofs:
+      - kind: boundary
+        scenarioId: cron-single-run-no-duplicate
+        coverageIds:
+          - automation.manual-cron-runs
+          - automation.run-history-cron
+  - id: empty-response-retry-boundary
+    stage: recovery
+    surface: agent-runtime
+    title: Exhaust bounded empty-response retries without unsafe repeated side effects
+    proofs:
+      - kind: recovery
+        scenarioId: empty-response-retry-budget-exhausted
+        coverageIds:
+          - agent-runtime.failure-recovery-empty-response-recovery
+          - agent-runtime.progress-visibility-failure-recovery
   - id: restart-recovery
     stage: recovery
     surface: session-memory
@@ -124,6 +215,24 @@ requirements:
         scenarioId: gateway-restart-inflight-run
         coverageIds:
           - session-memory.recovery-restart-recovery
+  - id: plugin-contract-sentinel
+    stage: validation
+    surface: plugins
+    title: Block release evidence when plugin manifest contracts fail during Gateway startup
+    proofs:
+      - kind: boundary
+        scenarioId: plugin-manifest-contract-health
+        coverageIds:
+          - plugins.load-failure-contract-sentinel
+  - id: tool-trace-observability
+    stage: monitoring
+    surface: observability
+    title: Preserve sanitized tool-call trace visibility on the QA bus
+    proofs:
+      - kind: observability
+        scenarioId: qa-bus-tool-trace-visibility
+        coverageIds:
+          - observability.telemetry-tool-trace-visibility
   - id: diagnostic-evidence
     stage: monitoring
     surface: observability
@@ -159,6 +268,15 @@ faultInjection:
   - id: telemetry-export-recovery
     kind: observability
     scenarioId: otel-gateway-runtime
+  - id: channel-reconnect-dedupe
+    kind: network
+    scenarioId: qa-channel-reconnect-dedupe
+  - id: scheduled-run-dedupe
+    kind: lifecycle
+    scenarioId: cron-single-run-no-duplicate
+  - id: empty-response-retry-budget
+    kind: provider
+    scenarioId: empty-response-retry-budget-exhausted
 performance:
   requiredMetrics:
     - ingest_ms

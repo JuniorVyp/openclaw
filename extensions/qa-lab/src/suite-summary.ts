@@ -11,6 +11,7 @@ import type { QaScorecardChannelDriver } from "./scorecard-taxonomy.js";
 
 type QaSuiteSummaryScenario = {
   name: string;
+  scenarioId?: string;
   status: "pass" | "fail" | "skip" | "skipped";
   steps: unknown[];
   details?: string;

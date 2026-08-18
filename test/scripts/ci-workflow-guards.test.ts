@@ -5782,6 +5782,8 @@ printf '%s\n' "\${CURL_SUCCESS_IP:-203.0.113.7}"
     expect(checksFastRun.run).toContain("bun-launcher)");
     expect(checksFastRun.run).toContain("e2e-360-coverage)");
     expect(checksFastRun.run).toContain("pnpm check:e2e:360");
+    expect(checksFastRun.run).toContain("check-e2e-360-evidence.test.ts");
+    expect(checksFastRun.run).toContain("suite-runtime-flow.test.ts");
     expect(checksFastRun.run).toContain(
       "OPENCLAW_E2E_SKIP_BUILD=1 OPENCLAW_TEST_BUN_LAUNCHER=1 pnpm test test/openclaw-launcher.e2e.test.ts",
     );
