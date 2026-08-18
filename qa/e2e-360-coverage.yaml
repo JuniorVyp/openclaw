@@ -1,0 +1,177 @@
+version: 1
+title: OpenClaw 360-degree end-to-end coverage contract
+summary: >-
+  Declarative traceability contract for the critical workflow from inbound input
+  through validation, processing, decision, delivery, recovery, and monitoring.
+requiredStages:
+  - input
+  - validation
+  - processing
+  - decision
+  - output
+  - recovery
+  - monitoring
+proofKinds:
+  - happy
+  - boundary
+  - recovery
+  - observability
+requirements:
+  - id: ingress-routing
+    stage: input
+    surface: channels
+    title: Route direct and group input to isolated conversations
+    proofs:
+      - kind: happy
+        scenarioId: channel-dm-group-routing
+        coverageIds:
+          - channels.inbound-routing-dm
+          - channels.runtime-conversation-routing
+      - kind: boundary
+        scenarioId: channel-sender-allowlist
+        coverageIds:
+          - channels.room-allowlist
+  - id: rich-input-media
+    stage: input
+    surface: channels
+    title: Accept and deliver workspace-relative media through supported routes
+    proofs:
+      - kind: happy
+        scenarioId: channel-workspace-relative-media
+        coverageIds:
+          - channels.outbound-direct-text-media-sends
+  - id: access-and-approval
+    stage: validation
+    surface: security
+    title: Enforce tool approval and deny unauthorized execution
+    proofs:
+      - kind: boundary
+        scenarioId: agent-tool-safety-approvals
+        coverageIds:
+          - agent-runtime.tool-approvals
+          - agent-runtime.approval-flow-approval-denial
+          - agent-runtime.tool-safety-controls
+  - id: streamed-agent-processing
+    stage: processing
+    surface: agent-runtime
+    title: Stream ordered agent events and persist one terminal result
+    proofs:
+      - kind: happy
+        scenarioId: session-streaming
+        coverageIds:
+          - agent-runtime.session-streaming
+      - kind: recovery
+        scenarioId: model-switch-tool-continuity
+        coverageIds:
+          - agent-runtime.runtime-override-switching
+  - id: delegated-processing
+    stage: processing
+    surface: agent-runtime
+    title: Delegate a bounded task and fold the result into the main turn
+    proofs:
+      - kind: happy
+        scenarioId: subagent-handoff
+        coverageIds:
+          - agent-runtime.subagent-turns-subagents
+  - id: mutating-decision-safety
+    stage: decision
+    surface: session-memory
+    title: Retry a mutating operation after compaction without duplicate side effects
+    proofs:
+      - kind: recovery
+        scenarioId: compaction-retry-mutating-tool
+        coverageIds:
+          - session-memory.compaction
+          - session-memory.compaction-retry-policy
+          - session-memory.pruning
+  - id: approval-decision-followthrough
+    stage: decision
+    surface: security
+    title: Execute only after a matching approval decision and clear one-shot grants
+    proofs:
+      - kind: boundary
+        scenarioId: agent-tool-safety-approvals
+        coverageIds:
+          - agent-runtime.approval-flow-followthrough
+  - id: streamed-channel-output
+    stage: output
+    surface: channels
+    title: Resolve previews and chunks into one coherent final reply
+    proofs:
+      - kind: happy
+        scenarioId: channel-message-flows
+        coverageIds:
+          - channels.streaming-final-reply
+      - kind: boundary
+        scenarioId: streaming-final-integrity
+        coverageIds:
+          - agent-runtime.streaming-replies
+  - id: media-output
+    stage: output
+    surface: channels
+    title: Deliver media while preserving the expected route and metadata
+    proofs:
+      - kind: happy
+        scenarioId: channel-workspace-relative-media
+        coverageIds:
+          - channels.outbound-direct-text-media-sends
+  - id: restart-recovery
+    stage: recovery
+    surface: session-memory
+    title: Recover an in-flight run after Gateway restart
+    proofs:
+      - kind: recovery
+        scenarioId: gateway-restart-inflight-run
+        coverageIds:
+          - session-memory.recovery-restart-recovery
+  - id: diagnostic-evidence
+    stage: monitoring
+    surface: observability
+    title: Export safe diagnostics with bounded and redacted evidence
+    proofs:
+      - kind: observability
+        scenarioId: gateway-support-export
+        coverageIds:
+          - observability.openclaw-gateway-diagnostics-export
+          - observability.support-zip-redaction
+          - observability.support-zip-artifact-safety
+  - id: trace-evidence
+    stage: monitoring
+    surface: observability
+    title: Correlate successful and failed tool turns in OTLP traces
+    proofs:
+      - kind: observability
+        scenarioId: otel-gateway-runtime
+        coverageIds:
+          - observability.otlp-http-traces-qa-lab
+          - observability.telemetry-trace
+          - observability.telemetry-failure-recovery
+faultInjection:
+  - id: gateway-restart
+    kind: lifecycle
+    scenarioId: gateway-restart-inflight-run
+  - id: provider-overflow
+    kind: provider
+    scenarioId: compaction-retry-mutating-tool
+  - id: tool-approval-denial
+    kind: policy
+    scenarioId: agent-tool-safety-approvals
+  - id: telemetry-export-recovery
+    kind: observability
+    scenarioId: otel-gateway-runtime
+performance:
+  requiredMetrics:
+    - ingest_ms
+    - first_token_ms
+    - final_response_ms
+    - delivery_ms
+    - recovery_ms
+    - tool_success_rate
+    - duplicate_side_effect_rate
+  budgets:
+    ingestMsP95: 500
+    firstTokenMsP95: 5000
+    finalResponseMsP95: 30000
+    deliveryMsP95: 5000
+    recoveryMsP95: 15000
+    duplicateSideEffectRate: 0

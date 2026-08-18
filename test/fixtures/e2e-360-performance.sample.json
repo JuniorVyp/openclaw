@@ -1,0 +1,32 @@
+{
+  "metadata": {
+    "source": "deterministic-contract-fixture",
+    "note": "Parser and budget-gate smoke fixture; not a production benchmark."
+  },
+  "samples": [
+    {
+      "scenarioId": "channel-dm-group-routing",
+      "metrics": {
+        "ingest_ms": 20,
+        "first_token_ms": 120,
+        "final_response_ms": 500,
+        "delivery_ms": 100,
+        "recovery_ms": 300,
+        "tool_success_rate": 1,
+        "duplicate_side_effect_rate": 0
+      }
+    },
+    {
+      "scenarioId": "session-streaming",
+      "metrics": {
+        "ingest_ms": 25,
+        "first_token_ms": 160,
+        "final_response_ms": 600,
+        "delivery_ms": 120,
+        "recovery_ms": 350,
+        "tool_success_rate": 1,
+        "duplicate_side_effect_rate": 0
+      }
+    }
+  ]
+}
