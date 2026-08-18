@@ -19,6 +19,7 @@ import type { QaSuiteRuntimeEnv } from "./suite-runtime-types.js";
 export type QaSuiteScenarioResult = {
   name: string;
   status: "pass" | "fail" | "skip";
+  scenarioId?: string;
   steps: QaReportCheck[];
   details?: string;
   timing?: QaEvidenceTiming;

@@ -126,6 +126,7 @@ describe("qa suite runtime flow", () => {
     expect(result).toMatchObject({
       status: "skip",
       details: "requires groupJid in the credential payload",
+      timing: { wallMs: expect.any(Number) },
       steps: [
         {
           name: "Prepare WhatsApp",
@@ -325,6 +326,7 @@ describe("qa suite runtime flow", () => {
       status: "fail",
       steps: [{ name: "Prepare Matrix live", status: "fail", details: "setup failed" }],
       details: "setup failed",
+      timing: { wallMs: expect.any(Number) },
     });
 
     expect(runScenario).toHaveBeenCalledWith("Matrix preparation", [

@@ -101,6 +101,8 @@ type QaSuiteStep = {
 type QaSuiteScenarioResult = {
   name: string;
   status: "pass" | "fail" | "skip";
+  scenarioId?: string;
+  timing?: { wallMs: number };
   steps: Array<{
     name: string;
     status: "pass" | "fail" | "skip";
@@ -113,6 +115,8 @@ export async function runQaSuiteScenarioSteps(
   name: string,
   steps: QaSuiteStep[],
 ): Promise<QaSuiteScenarioResult> {
+  const startedAt = Date.now();
+  const timing = () => ({ wallMs: Math.max(1, Date.now() - startedAt) });
   const stepResults: QaSuiteScenarioResult["steps"] = [];
   for (const step of steps) {
     try {
@@ -132,16 +136,16 @@ export async function runQaSuiteScenarioSteps(
       const details = formatQaErrorMessage(error);
       if (error instanceof QaSuiteScenarioSkipError) {
         stepResults.push({ name: step.name, status: "skip", details });
-        return { name, status: "skip", steps: stepResults, details };
+        return { name, status: "skip", steps: stepResults, details, timing: timing() };
       }
       if (process.env.OPENCLAW_QA_DEBUG === "1") {
         console.error(`[qa-suite] fail scenario="${name}" step="${step.name}" details=${details}`);
       }
       stepResults.push({ name: step.name, status: "fail", details });
-      return { name, status: "fail", steps: stepResults, details };
+      return { name, status: "fail", steps: stepResults, details, timing: timing() };
     }
   }
-  return { name, status: "pass", steps: stepResults };
+  return { name, status: "pass", steps: stepResults, timing: timing() };
 }
 
 type QaSuiteScenarioDepsParams = {
@@ -311,10 +315,14 @@ export async function runQaSuiteScenarioDefinition(params: QaSuiteScenarioFlowAp
       runScenario: params.runScenario,
     }),
   });
-  return await runScenarioFlow({
+  const result = await runScenarioFlow({
     api,
     flow: params.scenario.execution.flow,
     scenarioTitle: params.scenario.title,
     vars,
   });
+  if (result && typeof result === "object" && "status" in result && "steps" in result) {
+    return { ...result, scenarioId: params.scenario.id };
+  }
+  return result;
 }

@@ -1,0 +1,168 @@
+{
+  "kind": "openclaw.qa.evidence-summary",
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-18T00:00:00.000Z",
+  "evidenceMode": "full",
+  "entries": [
+    {
+      "test": { "kind": "qa-scenario", "id": "agent-tool-safety-approvals", "title": "Agent tool safety approvals" },
+      "coverage": [
+        { "id": "agent-runtime.approval-flow-approval-denial", "role": "primary" },
+        { "id": "agent-runtime.approval-flow-followthrough", "role": "primary" },
+        { "id": "agent-runtime.tool-approvals", "role": "primary" },
+        { "id": "agent-runtime.tool-safety-controls", "role": "primary" }
+      ],
+      "result": { "status": "pass", "timing": { "wallMs": 40 } }
+    },
+    {
+      "test": { "kind": "qa-scenario", "id": "channel-dm-group-routing", "title": "Channel DM group routing" },
+      "coverage": [
+        { "id": "channels.inbound-routing-dm", "role": "primary" },
+        { "id": "channels.runtime-conversation-routing", "role": "primary" }
+      ],
+      "result": { "status": "pass", "timing": { "wallMs": 35 } }
+    },
+    {
+      "test": { "kind": "qa-scenario", "id": "channel-message-flows", "title": "Channel message flows" },
+      "coverage": [{ "id": "channels.streaming-final-reply", "role": "primary" }],
+      "result": { "status": "pass", "timing": { "wallMs": 50 } }
+    },
+    {
+      "test": { "kind": "qa-scenario", "id": "channel-sender-allowlist", "title": "Channel sender allowlist" },
+      "coverage": [{ "id": "channels.room-allowlist", "role": "primary" }],
+      "result": { "status": "pass", "timing": { "wallMs": 30 } }
+    },
+    {
+      "test": { "kind": "qa-scenario", "id": "channel-workspace-relative-media", "title": "Channel workspace relative media" },
+      "coverage": [{ "id": "channels.outbound-direct-text-media-sends", "role": "primary" }],
+      "result": { "status": "pass", "timing": { "wallMs": 70 } }
+    },
+    {
+      "test": { "kind": "qa-scenario", "id": "compaction-retry-mutating-tool", "title": "Compaction retry mutating tool" },
+      "coverage": [
+        { "id": "session-memory.compaction", "role": "primary" },
+        { "id": "session-memory.compaction-retry-policy", "role": "primary" },
+        { "id": "session-memory.pruning", "role": "primary" }
+      ],
+      "result": { "status": "pass", "timing": { "wallMs": 120 } }
+    },
+    {
+      "test": { "kind": "qa-scenario", "id": "gateway-restart-inflight-run", "title": "Gateway restart inflight run" },
+      "coverage": [{ "id": "session-memory.recovery-restart-recovery", "role": "primary" }],
+      "result": { "status": "pass", "timing": { "wallMs": 180 } }
+    },
+    {
+      "test": { "kind": "qa-scenario", "id": "gateway-support-export", "title": "Gateway support export" },
+      "coverage": [
+        { "id": "observability.openclaw-gateway-diagnostics-export", "role": "primary" },
+        { "id": "observability.support-zip-artifact-safety", "role": "primary" },
+        { "id": "observability.support-zip-redaction", "role": "primary" }
+      ],
+      "result": { "status": "pass", "timing": { "wallMs": 90 } }
+    },
+    {
+      "test": { "kind": "qa-scenario", "id": "model-switch-tool-continuity", "title": "Model switch tool continuity" },
+      "coverage": [{ "id": "agent-runtime.runtime-override-switching", "role": "primary" }],
+      "result": { "status": "pass", "timing": { "wallMs": 85 } }
+    },
+    {
+      "test": { "kind": "qa-scenario", "id": "otel-gateway-runtime", "title": "OTEL Gateway runtime" },
+      "coverage": [
+        { "id": "observability.otlp-http-traces-qa-lab", "role": "primary" },
+        { "id": "observability.telemetry-failure-recovery", "role": "primary" },
+        { "id": "observability.telemetry-trace", "role": "primary" }
+      ],
+      "result": { "status": "pass", "timing": { "wallMs": 110 } }
+    },
+    {
+      "test": { "kind": "qa-scenario", "id": "session-streaming", "title": "Session streaming" },
+      "coverage": [{ "id": "agent-runtime.session-streaming", "role": "primary" }],
+      "result": { "status": "pass", "timing": { "wallMs": 75 } }
+    },
+    {
+      "test": { "kind": "qa-scenario", "id": "streaming-final-integrity", "title": "Streaming final integrity" },
+      "coverage": [{ "id": "agent-runtime.streaming-replies", "role": "primary" }],
+      "result": { "status": "pass", "timing": { "wallMs": 65 } }
+    },
+    {
+      "test": { "kind": "qa-scenario", "id": "subagent-handoff", "title": "Subagent handoff" },
+      "coverage": [{ "id": "agent-runtime.subagent-turns-subagents", "role": "primary" }],
+      "result": { "status": "pass", "timing": { "wallMs": 95 } }
+    },
+    {
+      "test": { "kind": "qa-scenario", "id": "session-reset-payload-preservation", "title": "Session reset payload preservation" },
+      "coverage": [{ "id": "channels.channel-native-commands", "role": "primary" }],
+      "result": { "status": "pass", "timing": { "wallMs": 55 } }
+    },
+    {
+      "test": { "kind": "qa-scenario", "id": "channel-mention-gating", "title": "Channel mention gating" },
+      "coverage": [{ "id": "channels.mention-gating", "role": "primary" }],
+      "result": { "status": "pass", "timing": { "wallMs": 45 } }
+    },
+    {
+      "test": { "kind": "qa-scenario", "id": "personal-approval-denial-stop", "title": "Personal approval denial stop" },
+      "coverage": [{ "id": "security.approval-policy-approval-denial", "role": "primary" }],
+      "result": { "status": "pass", "timing": { "wallMs": 60 } }
+    },
+    {
+      "test": { "kind": "qa-scenario", "id": "qa-channel-reconnect-dedupe", "title": "QA channel reconnect dedupe" },
+      "coverage": [{ "id": "channels.reconnect-final-reply", "role": "primary" }],
+      "result": { "status": "pass", "timing": { "wallMs": 140 } }
+    },
+    {
+      "test": { "kind": "qa-scenario", "id": "cron-single-run-no-duplicate", "title": "Cron single run no duplicate" },
+      "coverage": [
+        { "id": "automation.manual-cron-runs", "role": "primary" },
+        { "id": "automation.run-history-cron", "role": "primary" }
+      ],
+      "result": { "status": "pass", "timing": { "wallMs": 100 } }
+    },
+    {
+      "test": { "kind": "qa-scenario", "id": "empty-response-retry-budget-exhausted", "title": "Empty response retry budget exhausted" },
+      "coverage": [
+        { "id": "agent-runtime.failure-recovery-empty-response-recovery", "role": "primary" },
+        { "id": "agent-runtime.progress-visibility-failure-recovery", "role": "primary" }
+      ],
+      "result": { "status": "pass", "timing": { "wallMs": 160 } }
+    },
+    {
+      "test": { "kind": "qa-scenario", "id": "provider-http-503-visible-failure", "title": "Provider HTTP 503 visible failure" },
+      "coverage": [
+        { "id": "agent-runtime.structured-provider-diagnostics", "role": "primary" },
+        { "id": "channels.group-final-reply", "role": "primary" }
+      ],
+      "result": { "status": "pass", "timing": { "wallMs": 210 } }
+    },
+    {
+      "test": { "kind": "qa-scenario", "id": "gateway-node-control-plane", "title": "Gateway node control plane" },
+      "coverage": [
+        { "id": "gateway.node-presence", "role": "primary" },
+        { "id": "gateway.node-capabilities", "role": "primary" },
+        { "id": "gateway.node-inventory", "role": "primary" },
+        { "id": "gateway.node-actions", "role": "primary" },
+        { "id": "gateway.node-events", "role": "primary" },
+        { "id": "gateway.remote-device-capabilities", "role": "primary" },
+        { "id": "gateway.version-negotiation", "role": "primary" }
+      ],
+      "result": { "status": "pass", "timing": { "wallMs": 320 } }
+    },
+    {
+      "test": { "kind": "qa-scenario", "id": "tui-streaming-tool-cards-pty", "title": "TUI streaming tool cards PTY" },
+      "coverage": [
+        { "id": "tui.streaming-message-rendering", "role": "primary" },
+        { "id": "tui.tool-cards", "role": "primary" }
+      ],
+      "result": { "status": "pass", "timing": { "wallMs": 240 } }
+    },
+    {
+      "test": { "kind": "qa-scenario", "id": "plugin-manifest-contract-health", "title": "Plugin manifest contract health" },
+      "coverage": [{ "id": "plugins.load-failure-contract-sentinel", "role": "primary" }],
+      "result": { "status": "pass", "timing": { "wallMs": 130 } }
+    },
+    {
+      "test": { "kind": "qa-scenario", "id": "qa-bus-tool-trace-visibility", "title": "QA bus tool trace visibility" },
+      "coverage": [{ "id": "observability.telemetry-tool-trace-visibility", "role": "primary" }],
+      "result": { "status": "pass", "timing": { "wallMs": 75 } }
+    }
+  ]
+}

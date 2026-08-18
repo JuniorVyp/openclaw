@@ -1,0 +1,295 @@
+version: 1
+title: OpenClaw 360-degree end-to-end coverage contract
+summary: >-
+  Declarative traceability contract for the critical workflow from inbound input
+  through validation, processing, decision, delivery, recovery, and monitoring.
+requiredStages:
+  - input
+  - validation
+  - processing
+  - decision
+  - output
+  - recovery
+  - monitoring
+proofKinds:
+  - happy
+  - boundary
+  - recovery
+  - observability
+requirements:
+  - id: ingress-routing
+    stage: input
+    surface: channels
+    title: Route direct and group input to isolated conversations
+    proofs:
+      - kind: happy
+        scenarioId: channel-dm-group-routing
+        coverageIds:
+          - channels.inbound-routing-dm
+          - channels.runtime-conversation-routing
+      - kind: boundary
+        scenarioId: channel-sender-allowlist
+        coverageIds:
+          - channels.room-allowlist
+  - id: rich-input-media
+    stage: input
+    surface: channels
+    title: Accept and deliver workspace-relative media through supported routes
+    proofs:
+      - kind: happy
+        scenarioId: channel-workspace-relative-media
+        coverageIds:
+          - channels.outbound-direct-text-media-sends
+  - id: input-payload-boundary
+    stage: input
+    surface: channels
+    title: Preserve the exact user payload across channel reset boundaries
+    proofs:
+      - kind: boundary
+        scenarioId: session-reset-payload-preservation
+        coverageIds:
+          - channels.channel-native-commands
+  - id: mention-gating
+    stage: validation
+    surface: channels
+    title: Suppress unmentioned group traffic and release one mentioned reply
+    proofs:
+      - kind: boundary
+        scenarioId: channel-mention-gating
+        coverageIds:
+          - channels.mention-gating
+  - id: access-and-approval
+    stage: validation
+    surface: security
+    title: Enforce tool approval and deny unauthorized execution
+    proofs:
+      - kind: boundary
+        scenarioId: agent-tool-safety-approvals
+        coverageIds:
+          - agent-runtime.tool-approvals
+          - agent-runtime.approval-flow-approval-denial
+          - agent-runtime.tool-safety-controls
+  - id: provider-failure-visibility
+    stage: processing
+    surface: providers
+    title: Surface provider failures safely after tool execution without replaying the tool
+    proofs:
+      - kind: boundary
+        scenarioId: provider-http-503-visible-failure
+        coverageIds:
+          - agent-runtime.structured-provider-diagnostics
+          - channels.group-final-reply
+  - id: streamed-agent-processing
+    stage: processing
+    surface: agent-runtime
+    title: Stream ordered agent events and persist one terminal result
+    proofs:
+      - kind: happy
+        scenarioId: session-streaming
+        coverageIds:
+          - agent-runtime.session-streaming
+      - kind: recovery
+        scenarioId: model-switch-tool-continuity
+        coverageIds:
+          - agent-runtime.runtime-override-switching
+  - id: delegated-processing
+    stage: processing
+    surface: agent-runtime
+    title: Delegate a bounded task and fold the result into the main turn
+    proofs:
+      - kind: happy
+        scenarioId: subagent-handoff
+        coverageIds:
+          - agent-runtime.subagent-turns-subagents
+  - id: mutating-decision-safety
+    stage: decision
+    surface: session-memory
+    title: Retry a mutating operation after compaction without duplicate side effects
+    proofs:
+      - kind: recovery
+        scenarioId: compaction-retry-mutating-tool
+        coverageIds:
+          - session-memory.compaction
+          - session-memory.compaction-retry-policy
+          - session-memory.pruning
+  - id: approval-denial-stop
+    stage: decision
+    surface: security
+    title: Stop cleanly after denied approval without executing the protected tool
+    proofs:
+      - kind: boundary
+        scenarioId: personal-approval-denial-stop
+        coverageIds:
+          - security.approval-policy-approval-denial
+  - id: approval-decision-followthrough
+    stage: decision
+    surface: security
+    title: Execute only after a matching approval decision and clear one-shot grants
+    proofs:
+      - kind: boundary
+        scenarioId: agent-tool-safety-approvals
+        coverageIds:
+          - agent-runtime.approval-flow-followthrough
+  - id: streamed-channel-output
+    stage: output
+    surface: channels
+    title: Resolve previews and chunks into one coherent final reply
+    proofs:
+      - kind: happy
+        scenarioId: channel-message-flows
+        coverageIds:
+          - channels.streaming-final-reply
+      - kind: boundary
+        scenarioId: streaming-final-integrity
+        coverageIds:
+          - agent-runtime.streaming-replies
+  - id: node-control-plane
+    stage: output
+    surface: nodes
+    title: Pair a remote node and exercise authenticated capabilities through Gateway control plane
+    proofs:
+      - kind: happy
+        scenarioId: gateway-node-control-plane
+        coverageIds:
+          - gateway.node-presence
+          - gateway.node-capabilities
+          - gateway.node-inventory
+          - gateway.node-actions
+          - gateway.node-events
+          - gateway.remote-device-capabilities
+          - gateway.version-negotiation
+  - id: tui-rendering
+    stage: output
+    surface: tui
+    title: Render streaming messages and tool cards without stale or duplicated terminal frames
+    proofs:
+      - kind: happy
+        scenarioId: tui-streaming-tool-cards-pty
+        coverageIds:
+          - tui.streaming-message-rendering
+          - tui.tool-cards
+  - id: media-output
+    stage: output
+    surface: channels
+    title: Deliver media while preserving the expected route and metadata
+    proofs:
+      - kind: happy
+        scenarioId: channel-workspace-relative-media
+        coverageIds:
+          - channels.outbound-direct-text-media-sends
+  - id: reconnect-idempotency
+    stage: recovery
+    surface: channels
+    title: Resume after reconnect without replaying completed delivery
+    proofs:
+      - kind: recovery
+        scenarioId: qa-channel-reconnect-dedupe
+        coverageIds:
+          - channels.reconnect-final-reply
+  - id: scheduled-run-idempotency
+    stage: recovery
+    surface: automation
+    title: Execute one scheduled run without duplicate delivery
+    proofs:
+      - kind: boundary
+        scenarioId: cron-single-run-no-duplicate
+        coverageIds:
+          - automation.manual-cron-runs
+          - automation.run-history-cron
+  - id: empty-response-retry-boundary
+    stage: recovery
+    surface: agent-runtime
+    title: Exhaust bounded empty-response retries without unsafe repeated side effects
+    proofs:
+      - kind: recovery
+        scenarioId: empty-response-retry-budget-exhausted
+        coverageIds:
+          - agent-runtime.failure-recovery-empty-response-recovery
+          - agent-runtime.progress-visibility-failure-recovery
+  - id: restart-recovery
+    stage: recovery
+    surface: session-memory
+    title: Recover an in-flight run after Gateway restart
+    proofs:
+      - kind: recovery
+        scenarioId: gateway-restart-inflight-run
+        coverageIds:
+          - session-memory.recovery-restart-recovery
+  - id: plugin-contract-sentinel
+    stage: validation
+    surface: plugins
+    title: Block release evidence when plugin manifest contracts fail during Gateway startup
+    proofs:
+      - kind: boundary
+        scenarioId: plugin-manifest-contract-health
+        coverageIds:
+          - plugins.load-failure-contract-sentinel
+  - id: tool-trace-observability
+    stage: monitoring
+    surface: observability
+    title: Preserve sanitized tool-call trace visibility on the QA bus
+    proofs:
+      - kind: observability
+        scenarioId: qa-bus-tool-trace-visibility
+        coverageIds:
+          - observability.telemetry-tool-trace-visibility
+  - id: diagnostic-evidence
+    stage: monitoring
+    surface: observability
+    title: Export safe diagnostics with bounded and redacted evidence
+    proofs:
+      - kind: observability
+        scenarioId: gateway-support-export
+        coverageIds:
+          - observability.openclaw-gateway-diagnostics-export
+          - observability.support-zip-redaction
+          - observability.support-zip-artifact-safety
+  - id: trace-evidence
+    stage: monitoring
+    surface: observability
+    title: Correlate successful and failed tool turns in OTLP traces
+    proofs:
+      - kind: observability
+        scenarioId: otel-gateway-runtime
+        coverageIds:
+          - observability.otlp-http-traces-qa-lab
+          - observability.telemetry-trace
+          - observability.telemetry-failure-recovery
+faultInjection:
+  - id: gateway-restart
+    kind: lifecycle
+    scenarioId: gateway-restart-inflight-run
+  - id: provider-overflow
+    kind: provider
+    scenarioId: compaction-retry-mutating-tool
+  - id: tool-approval-denial
+    kind: policy
+    scenarioId: agent-tool-safety-approvals
+  - id: telemetry-export-recovery
+    kind: observability
+    scenarioId: otel-gateway-runtime
+  - id: channel-reconnect-dedupe
+    kind: network
+    scenarioId: qa-channel-reconnect-dedupe
+  - id: scheduled-run-dedupe
+    kind: lifecycle
+    scenarioId: cron-single-run-no-duplicate
+  - id: empty-response-retry-budget
+    kind: provider
+    scenarioId: empty-response-retry-budget-exhausted
+performance:
+  requiredMetrics:
+    - ingest_ms
+    - first_token_ms
+    - final_response_ms
+    - delivery_ms
+    - recovery_ms
+    - tool_success_rate
+    - duplicate_side_effect_rate
+  budgets:
+    ingestMsP95: 500
+    firstTokenMsP95: 5000
+    finalResponseMsP95: 30000
+    deliveryMsP95: 5000
+    recoveryMsP95: 15000
+    duplicateSideEffectRate: 0

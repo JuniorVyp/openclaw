@@ -655,6 +655,13 @@ jobs:
               { check_name: "checks-fast-bundled-protocol", runtime: "node", task: "bundled-protocol" },
               { check_name: "checks-fast-bun-launcher", runtime: "bun", task: "bun-launcher" },
             );
+            if (!frozenTarget) {
+              checksFastCoreTasks.push({
+                check_name: "checks-fast-e2e-360-coverage",
+                runtime: "node",
+                task: "e2e-360-coverage",
+              });
+            }
           } else {
             if (runNodeFastCiRouting) {
               checksFastCoreTasks.push({
@@ -1942,6 +1949,11 @@ jobs:
               ;;
             bun-launcher)
               OPENCLAW_E2E_SKIP_BUILD=1 OPENCLAW_TEST_BUN_LAUNCHER=1 pnpm test test/openclaw-launcher.e2e.test.ts
+              ;;
+            e2e-360-coverage)
+              pnpm check:e2e:360
+              pnpm test test/scripts/check-e2e-360-coverage.test.ts test/scripts/check-e2e-360-performance.test.ts test/scripts/check-e2e-360-evidence.test.ts
+              pnpm test extensions/qa-lab/src/suite-runtime-flow.test.ts
               ;;
             *)
               echo "Unsupported checks-fast task: $TASK" >&2

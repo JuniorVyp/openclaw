@@ -38,6 +38,7 @@ import type { QaSuiteSummaryJson } from "./suite-summary.js";
 export type QaSuiteScenarioResult = {
   name: string;
   status: "pass" | "fail" | "skip";
+  scenarioId?: string;
   steps: QaReportCheck[];
   details?: string;
   timing?: QaEvidenceTiming;
